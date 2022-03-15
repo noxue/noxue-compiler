@@ -2,6 +2,11 @@
 name = "noxue-compiler"
 version = "0.1.0"
 edition = "2021"
+description = "简化web开发的一个路由，参考了go语言gin的设计"
+documentation = "http://noxue.com"
+homepage = "http://noxue.com"
+license-file = "LICENSE.txt"
+repository = "https://gitee.com/noxue-com/fast-router"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
