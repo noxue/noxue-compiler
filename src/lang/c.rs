@@ -12,8 +12,6 @@ pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
 }
 
 
-
-
 #[test]
 fn test_c() {
     // 要执行的代码

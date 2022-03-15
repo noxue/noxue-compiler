@@ -23,6 +23,5 @@ fn test() {
     let timeout = 2;
 
     let out = run(code, input, timeout);
-    println!("{:#?}", out);
     assert_eq!(out.unwrap().stdout, "hello\n");
 }

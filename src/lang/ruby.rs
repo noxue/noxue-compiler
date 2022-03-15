@@ -2,19 +2,19 @@ use crate::exec::{exec, Output};
 
 pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     let cmd = format!(
-        "cd /tmp && echo {:?} > test.php && timeout {} php test.php",
+        "cd /tmp && echo {:?} > test.rb && timeout -v {} ruby test.rb",
         code, timeout
     );
 
-    let image = "php:5.6";
+    let image = "ruby";
     exec(image, &cmd, input)
 }
 
 #[test]
-fn test_php56() {
+fn test() {
     // 要执行的代码
-    let code = r#"<?php
-    echo "hello";
+    let code = r#"#!/usr/bin/ruby
+    puts "hello";
     "#;
 
     // 标准输入的内容
@@ -24,5 +24,5 @@ fn test_php56() {
     let timeout = 2;
 
     let out = run(code, input, timeout);
-    assert_eq!(out.unwrap().stdout, "hello");
+    assert_eq!(out.unwrap().stdout, "hello\n");
 }

@@ -11,7 +11,7 @@ pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     exec(image, &cmd, input)
 }
 
-#[test]
+// #[test]
 fn test() {
     // 要执行的代码
     let code =include_str!("./Test.java");// r#"public class Test {public static void main(String[] args) {System.out.print("hello");}}"#;

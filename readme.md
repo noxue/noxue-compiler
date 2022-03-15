@@ -1,3 +1,4 @@
+```
 docker rm $(docker ps -a -q)  删除所有容器
 
 
@@ -12,4 +13,5 @@ docker pull golang
 docker pull python:2
 docker pull python:3
 docker pull adityai/jdk13
-
+docker pull ruby
+```
