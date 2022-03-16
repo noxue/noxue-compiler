@@ -2,7 +2,7 @@ use crate::exec::{exec, Output};
 
 pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     let cmd = format!(
-        "echo {:?} > Test.java && javac -encoding utf8 Test.java && if test -f \"./Test.class\"; then\n timeout {} java Test \nfi",
+        "echo '{}' > Test.java && javac -encoding utf8 Test.java && if test -f \"./Test.class\"; then\n timeout {} java Test \nfi",
         code,
         timeout
     );
@@ -22,6 +22,7 @@ fn test() {
     // 超时时间，单位:秒
     let timeout = 10;
 
+    
     let out = run(code, input, timeout).unwrap();
     println!("stdout:{}", out.stderr);
     assert_eq!(out.stdout, "hello");

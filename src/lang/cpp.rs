@@ -2,7 +2,7 @@ use crate::exec::{exec, Output};
 
 pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     let cmd = format!(
-        "cd /tmp & echo {:?} > test.cpp && g++ test.cpp -o test && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
+        "cd /tmp & echo '{}' > test.cpp && g++ test.cpp -o test && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
         code,
         timeout
     );
@@ -28,7 +28,7 @@ pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
         "#;
 
         // 标准输入的内容
-        let input = r#"asdfadf"#;
+        let input = r#""#;
 
         // 超时时间，单位:秒
         let timeout = 2;

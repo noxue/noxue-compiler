@@ -2,7 +2,7 @@ use crate::exec::{exec, Output};
 
 pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     let cmd = format!(
-        "cd /tmp && echo {:?} > test.go && go run test.go && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
+        "cd /tmp && echo '{}' > test.go && go run test.go && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
         code,
         timeout
     );

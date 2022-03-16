@@ -3,28 +3,6 @@ use std::{
     process::{Command, Stdio},
 };
 
-pub fn compile_and_run_c(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
-    let cmd = format!(
-        "cd /tmp & echo {:?} > test.c && gcc test.c -o test && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
-        code,
-        timeout
-    );
-
-    let image = "gcc";
-    exec(image, &cmd, input)
-}
-
-pub fn compile_and_run_rust(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
-    let cmd = format!(
-        "cd /tmp & echo {:?} > test.rs && rustc test.rs -o test && if test -f \"./test\"; then\n timeout -v {} ./test \nfi",
-        code,
-        timeout
-    );
-
-    let image = "rust";
-    exec(image, &cmd, input)
-}
-
 #[derive(Debug)]
 pub struct Output {
     pub stdout: String,
@@ -41,12 +19,10 @@ pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
     let mut child = match Command::new("docker")
         .arg("run")
         .arg("--rm")
-        // .arg("--network none") // 禁止网络
+        .arg("--network=none") // 禁止网络
         .arg("-i")
         .arg(image)
-        .arg("sh")
-        .arg("-c")
-        .arg(cmd)
+        .arg("/bin/bash")
         .stdout(Stdio::piped())
         .stdin(Stdio::piped())
         .stderr(Stdio::piped())
@@ -61,7 +37,7 @@ pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
 
     // 标准输入
     let mut stdin = child.stdin.take().expect("Failed to open stdin");
-    let input = input.to_string();
+    let input = format!("{}\n{}", cmd, input);
 
     std::thread::spawn(move || {
         stdin
@@ -70,6 +46,8 @@ pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
     });
 
     let output = child.wait_with_output().expect("Failed to read stdout");
+
+    println!("exec out:{:#?}", output);
 
     // 处理超时的情况，返回友好的提示信息，这里默认执行命令是使用 timeout 来指定超时
     if String::from_utf8_lossy(&output.stderr)
