@@ -1,6 +1,7 @@
 use std::{
     io::Write,
     process::{Command, Stdio},
+    sync::{Arc, Mutex},
     thread,
     time::Duration,
 };
@@ -19,15 +20,19 @@ impl Output {
     }
 }
 
-pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
+pub fn exec(image: &str, cmd: &str, input: &str, timeout: i32) -> Result<Output, String> {
     // 生成全局唯一的 container 名字，用于定时结束
     let container_name = format!("{}", Uuid::new_v4());
     let container_name1 = container_name.clone();
 
+    // 记录是否超时
+    let is_timeout = Arc::new(Mutex::new(false));
+
+    let is_timeout1 = is_timeout.clone();
     // 开线程定时结束容器
     thread::spawn(move || {
         // 等待指定时间
-        thread::sleep(Duration::from_secs(10));
+        thread::sleep(Duration::from_secs(timeout as u64));
 
         // 执行强制结束docker容器的命令
         Command::new("docker")
@@ -36,9 +41,12 @@ pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
             .arg(container_name1)
             .output()
             .unwrap();
+
+        let mut is_timeout = is_timeout1.lock().unwrap();
+        // 超时设置为 true
+        *is_timeout = true;
     });
 
-    println!("{}", container_name);
     let mut child = match Command::new("docker")
         .arg("run")
         .arg(format!("--name={}", container_name))
@@ -74,14 +82,8 @@ pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
 
     let output = child.wait_with_output().expect("Failed to read stdout");
 
-    println!("exec out:{:#?}", output);
-
-    // 处理超时的情况，返回友好的提示信息，这里默认执行命令是使用 timeout 来指定超时
-    if String::from_utf8_lossy(&output.stderr)
-        .to_string()
-        // 标准错误输出中 包含这串字符串就算超时，这个字符串是 timeout 超时才有的信息
-        .contains("timeout: sending signal TERM to command")
-    {
+    // 处理超时的情况，返回友好的提示信息
+    if *is_timeout.clone().lock().unwrap() {
         return Err("运行超时".to_string());
     }
 
