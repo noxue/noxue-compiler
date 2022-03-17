@@ -1,7 +1,11 @@
 use std::{
     io::Write,
     process::{Command, Stdio},
+    thread,
+    time::Duration,
 };
+
+use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct Output {
@@ -16,13 +20,28 @@ impl Output {
 }
 
 pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
-    // 生成container名字格式：随机数-时间戳，用于定时结束
-    let container_name = {
-        
-    };
+    // 生成全局唯一的 container 名字，用于定时结束
+    let container_name = format!("{}", Uuid::new_v4());
+    let container_name1 = container_name.clone();
+
+    // 开线程定时结束容器
+    thread::spawn(move || {
+        // 等待指定时间
+        thread::sleep(Duration::from_secs(10));
+
+        // 执行强制结束docker容器的命令
+        Command::new("docker")
+            .arg("rm")
+            .arg("-f")
+            .arg(container_name1)
+            .output()
+            .unwrap();
+    });
+
+    println!("{}", container_name);
     let mut child = match Command::new("docker")
         .arg("run")
-        .arg("--name=aaasddf")
+        .arg(format!("--name={}", container_name))
         .arg("--rm")
         .arg("--network=none") // 禁止网络
         .arg("--memory=10MB") // 限制内存

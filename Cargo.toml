@@ -1,15 +1,14 @@
 [package]
+description = "利用docker实现在线编译运行代码"
+edition = "2021"
 name = "noxue-compiler"
 version = "0.1.3"
-edition = "2021"
-description = "利用docker实现在线编译运行代码"
 # documentation = "http://noxue.com"
 homepage = "http://code.noxue.com"
 license-file = "LICENSE.txt"
 repository = "https://github.com/noxue/noxue-compiler"
 
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uuid="0.8.2"
+uuid = {version = "0.8.2", features = ["v4"]}
