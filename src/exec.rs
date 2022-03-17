@@ -16,10 +16,14 @@ impl Output {
 }
 
 pub fn exec(image: &str, cmd: &str, input: &str) -> Result<Output, String> {
+    // 生成container名字格式：随机数-时间戳，用于定时结束
+
     let mut child = match Command::new("docker")
         .arg("run")
         .arg("--rm")
         .arg("--network=none") // 禁止网络
+        .arg("-m 10M") // 限制内存
+        .arg("--cpus=1")
         .arg("-i")
         .arg(image)
         .arg("/bin/bash")
