@@ -4,10 +4,11 @@ use crate::exec::{exec, Output};
 
 #[derive(Serialize, Deserialize)]
 struct RunTpl {
-    image: String, // docker iamge 名字
-    file: String,  // 代码要保存的文件路径
-    cmd: String,   // 保存代码之后要执行的命令
-    timeout: i32,  // 容器执行超时时间
+    image: String,  // docker iamge 名字
+    file: String,   // 代码要保存的文件路径
+    cmd: String,    // 保存代码之后要执行的命令
+    timeout: i32,   // 容器执行超时时间
+    memory: String, // 允许容器使用的内存,例如:20MB
 }
 
 /// 根据语言选择特定的执行模板来编译运行代码
@@ -24,7 +25,8 @@ struct RunTpl {
 ///     "image": "gcc",  // 要使用那个docker imgage
 ///     "file": "test.c", // 代码保存的文件名
 ///     "cmd": "gcc test.c -o test\nif test -f \"./test\"; then\n./test\nfi",  // 代码保存后要执行的命令
-///     "timeout": 10 // 超时时间，是从启动docker开始计算
+///     "timeout": 10, // 超时时间，是从启动docker开始计算
+///     "memory": "20MB" // 允许占用的内存
 /// }
 /// ```
 ///
@@ -70,5 +72,11 @@ pub fn run(lang: &str, code: &str, input: &str) -> Result<Output, String> {
         run_tpl.file, eof, code, eof, run_tpl.cmd
     );
 
-    exec(&run_tpl.image, &cmd, input, run_tpl.timeout)
+    exec(
+        &run_tpl.image,
+        &cmd,
+        input,
+        run_tpl.timeout,
+        &run_tpl.memory,
+    )
 }

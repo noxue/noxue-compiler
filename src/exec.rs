@@ -20,7 +20,13 @@ impl Output {
     }
 }
 
-pub fn exec(image: &str, cmd: &str, input: &str, timeout: i32) -> Result<Output, String> {
+pub fn exec(
+    image: &str,
+    cmd: &str,
+    input: &str,
+    timeout: i32,
+    memory: &str,
+) -> Result<Output, String> {
     // 生成全局唯一的 container 名字，用于定时结束
     let container_name = format!("{}", Uuid::new_v4());
     let container_name1 = container_name.clone();
@@ -52,7 +58,7 @@ pub fn exec(image: &str, cmd: &str, input: &str, timeout: i32) -> Result<Output,
         .arg(format!("--name={}", container_name))
         .arg("--rm")
         .arg("--network=none") // 禁止网络
-        .arg("--memory=10MB") // 限制内存
+        .arg(format!("--memory={}", memory)) // 限制内存
         .arg("--cpus=1")
         .arg("--memory-swap=-1")
         .arg("-i")

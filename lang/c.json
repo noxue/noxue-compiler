@@ -2,5 +2,6 @@
     "image": "gcc",
     "file": "test.c",
     "cmd": "gcc test.c -o test\nif test -f \"./test\"; then\n./test\nfi",
-    "timeout": 10
+    "timeout": 10,
+    "memory":"20MB"
 }
