@@ -15,7 +15,7 @@ struct RunTpl {
 ///
 /// ## 参数
 ///
-/// * `lang` - 指定语言，和执行模板中的文件对应，lang目录下必须存在对应的 json 模板文件
+/// * `tpl` - 指定的运行模板内容,使用模板更加方便扩展任意编程语言
 /// * `code` - 要编译的代码
 /// * `input` - 标准输入，用户给程序的输入数据
 ///
@@ -42,27 +42,36 @@ struct RunTpl {
 ///     printf("hello");
 ///     return 0;
 /// }"#;
-///     let out = run("c", code, "");
+///     let tpl = r#"
+/// {
+/// "image": "gcc",
+/// "file": "test.c",
+/// "cmd": "gcc test.c -o test\nif test -f \"./test\"; then\n./test\nfi",
+/// "timeout": 10,
+/// "memory":"20MB"
+/// }
+/// "#;
+///     let out = run(tpl, code, "");
 ///     assert_eq!(out.unwrap().stdout, "hello");
 /// }
 /// ```
 ///
-pub fn run(lang: &str, code: &str, input: &str) -> Result<Output, String> {
+pub fn run(tpl: &str, code: &str, input: &str) -> Result<Output, String> {
     /***
      * 根据参数生成命令
-     * 1. 读取 运行对应语言的模板文件
-     * 2. 解析成结构体 RunTpl
-     * 3. 拼接 写入文件 编译运行文件 命令
-     * 5. 调用exec函数执行 以上命令
+     *
+     * 1. 根据模板json数据，解析成结构体 RunTpl
+     * 2. 拼接 写入文件 编译运行文件 命令
+     * 3. 调用exec函数执行 以上命令
      */
 
-    let tpl = match std::fs::read_to_string(format!("./lang/{}.json", lang)) {
+    let run_tpl: RunTpl = match serde_json::from_str(&tpl) {
         Ok(v) => v,
         Err(e) => {
-            return Err(format!("不支持该语言:{},错误:{}", lang, e));
+            return Err(format!("运行模板不正确：{}", e));
         }
+        
     };
-    let run_tpl: RunTpl = serde_json::from_str(&tpl).unwrap();
 
     // 开始结束字符串，随机生成防止内容中包含该字符串导致输入结束
     let eof = format!("{}", uuid::Uuid::new_v4());
