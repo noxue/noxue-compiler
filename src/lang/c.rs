@@ -3,7 +3,9 @@ use crate::exec::{exec, Output};
 pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
     let cmd = format!(
         r#"cd /tmp
-            echo  '{}' > test.c
+            cat>test.c<<NOXUE_EOFFFFFFF
+{}
+NOXUE_EOFFFFFFF
             gcc test.c -o test
             if test -f "./test"; then
                 timeout -v {} ./test 
@@ -23,7 +25,7 @@ pub fn run(code: &str, input: &str, timeout: i32) -> Result<Output, String> {
 #[test]
 fn test_c() {
     // 要执行的代码
-    let code = "#include <stdio.h>\r\nint main(){\r\n   printf(\"hello\\n\");\r\n    return 0;\r\n}";
+    let code = "// ' \r\n#include <stdio.h>\r\nint main(){\r\n   printf(\"hello\\n\");\r\n    return 0;\r\n}";
 
     // 标准输入的内容
     let input = r#"hello"#;
