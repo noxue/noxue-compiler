@@ -59,8 +59,8 @@ pub fn exec(
         .arg("--rm")
         .arg("--network=none") // 禁止网络
         .arg(format!("--memory={}", memory)) // 限制内存
-        .arg("--cpus=1")
-        .arg("--memory-swap=-1")
+        // .arg("--cpus=1")
+        // .arg("--memory-swap=-1")
         .arg("-i")
         .arg(image)
         .arg("/bin/bash")
