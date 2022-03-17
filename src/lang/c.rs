@@ -25,13 +25,13 @@ NOXUE_EOFFFFFFF
 #[test]
 fn test_c() {
     // 要执行的代码
-    let code = "// ' \r\n#include <stdio.h>\r\nint main(){\r\n   printf(\"hello\\n\");\r\n    return 0;\r\n}";
+    let code = "// ' \r\n#include <stdio.h>\r\n#include<stdlib.h>\r\nint main(){\r\n  int i=1000;for(;i;i--) {int *p = (int*)malloc(1024*1024);} printf(\"hello\\n\");\r\n for(;;);   return 0;\r\n}";
 
     // 标准输入的内容
-    let input = r#"hello"#;
+    let input = r#""#;
 
     // 超时时间，单位:秒
-    let timeout = 20;
+    let timeout = 120;
 
     let out = run(code, input, timeout);
     println!("{:?}", out);
