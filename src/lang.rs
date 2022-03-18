@@ -9,6 +9,7 @@ struct RunTpl {
     cmd: String,    // 保存代码之后要执行的命令
     timeout: i32,   // 容器执行超时时间
     memory: String, // 允许容器使用的内存,例如:20MB
+    cpuset: String, // 使用的cpu核心
 }
 
 /// 根据语言选择特定的执行模板来编译运行代码
@@ -26,7 +27,8 @@ struct RunTpl {
 ///     "file": "test.c", // 代码保存的文件名
 ///     "cmd": "gcc test.c -o test\nif test -f \"./test\"; then\n./test\nfi",  // 代码保存后要执行的命令
 ///     "timeout": 10, // 超时时间，是从启动docker开始计算
-///     "memory": "20MB" // 允许占用的内存
+///     "memory": "20MB", // 允许占用的内存
+///     "cpuset":"0-3", // 使用的cpu核心
 /// }
 /// ```
 ///
@@ -48,7 +50,8 @@ struct RunTpl {
 /// "file": "test.c",
 /// "cmd": "gcc test.c -o test\nif test -f \"./test\"; then\n./test\nfi",
 /// "timeout": 10,
-/// "memory":"20MB"
+/// "memory":"20MB",
+/// "cpuset":"0-3"
 /// }
 /// "#;
 ///     let out = run(tpl, code, "");
@@ -70,7 +73,6 @@ pub fn run(tpl: &str, code: &str, input: &str) -> Result<Output, String> {
         Err(e) => {
             return Err(format!("运行模板不正确：{}", e));
         }
-        
     };
 
     // 开始结束字符串，随机生成防止内容中包含该字符串导致输入结束
@@ -87,5 +89,6 @@ pub fn run(tpl: &str, code: &str, input: &str) -> Result<Output, String> {
         input,
         run_tpl.timeout,
         &run_tpl.memory,
+        &run_tpl.cpuset,
     )
 }

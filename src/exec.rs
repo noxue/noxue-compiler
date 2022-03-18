@@ -26,6 +26,7 @@ pub fn exec(
     input: &str,
     timeout: i32,
     memory: &str,
+    cpuset: &str,
 ) -> Result<Output, String> {
     // 生成全局唯一的 container 名字，用于定时结束
     let container_name = format!("{}", Uuid::new_v4());
@@ -59,8 +60,9 @@ pub fn exec(
         .arg("--rm")
         .arg("--network=none") // 禁止网络
         .arg(format!("--memory={}", memory)) // 限制内存
-        // .arg("--cpus=1")
-        // .arg("--memory-swap=-1")
+        .arg("--cpus=1")
+        .arg("--memory-swap=-1")
+        .arg(format!("--cpuset-cpus={}", cpuset))
         .arg("-i")
         .arg(image)
         .arg("/bin/bash")
