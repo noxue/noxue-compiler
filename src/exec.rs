@@ -20,6 +20,14 @@ impl Output {
     }
 }
 
+/// ## 使用指定的image执行命令
+///
+/// *  `image`      - docker image 名字
+/// *  `cmd`        - 要在容器中执行的命令
+/// *  `input`      - 用户执行程序是要输入的内容
+/// *  `timeout`    - 容器超时时间，单位为秒
+/// *  `memory`     - 容器运行时可以使用的内存大小，例如：50MB
+/// *  `cpuset`     - 运行时可以使用的cpu，比如：0-3，表示使用4个cpu
 pub fn exec(
     image: &str,
     cmd: &str,
