@@ -2,7 +2,7 @@
 description = "利用docker实现在线编译运行代码"
 edition = "2021"
 name = "noxue-compiler"
-version = "1.0.3"
+version = "1.0.4"
 # documentation = "http://noxue.com"
 homepage = "http://code.noxue.com"
 license-file = "LICENSE.txt"

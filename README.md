@@ -12,6 +12,7 @@ docker pull python:2
 docker pull python:3
 docker pull adityai/jdk13
 docker pull ruby
+docker pull perl
 ```
 
 ### bug

@@ -79,7 +79,7 @@ pub fn run(tpl: &str, code: &str, input: &str) -> Result<Output, String> {
     let eof = format!("{}", uuid::Uuid::new_v4());
 
     let cmd = format!(
-        "cat>{}<<{}\n{}\n{}\n{}",
+        "cat>{}<<\\{}\n{}\n{}\n{}",
         run_tpl.file, eof, code, eof, run_tpl.cmd
     );
 
