@@ -4,12 +4,13 @@ use crate::exec::{exec, Output};
 
 #[derive(Serialize, Deserialize)]
 struct RunTpl {
-    image: String,  // docker iamge 名字
-    file: String,   // 代码要保存的文件路径
-    cmd: String,    // 保存代码之后要执行的命令
-    timeout: i32,   // 容器执行超时时间
-    memory: String, // 允许容器使用的内存,例如:20MB
-    cpuset: String, // 使用的cpu核心
+    image: String,            // docker iamge 名字
+    file: String,             // 代码要保存的文件路径
+    prev_cmd: Option<String>, // 写入之前执行的命令，主要用于设置一些变量，给cmd中的命令使用
+    cmd: String,              // 保存代码之后要执行的命令
+    timeout: i32,             // 容器执行超时时间
+    memory: String,           // 允许容器使用的内存,例如:20MB
+    cpuset: String,           // 使用的cpu核心
 }
 
 /// 根据语言选择特定的执行模板来编译运行代码
@@ -79,8 +80,17 @@ pub fn run(tpl: &str, code: &str, input: &str) -> Result<Output, String> {
     let eof = format!("{}", uuid::Uuid::new_v4());
 
     let cmd = format!(
-        "cat>{}<<\\{}\n{}\n{}\n{}",
-        run_tpl.file, eof, code, eof, run_tpl.cmd
+        "{}\ncat>{}<<\\{}\n{}\n{}\n{}",
+        if let Some(v) = run_tpl.prev_cmd {
+            v
+        } else {
+            "".to_owned()
+        },
+        run_tpl.file,
+        eof,
+        code,
+        eof,
+        run_tpl.cmd
     );
 
     exec(

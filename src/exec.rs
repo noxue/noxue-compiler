@@ -36,6 +36,9 @@ pub fn exec(
     memory: &str,
     cpuset: &str,
 ) -> Result<Output, String> {
+
+    log::debug!("cmd:{}", cmd);
+
     // 生成全局唯一的 container 名字，用于定时结束
     let container_name = format!("{}", Uuid::new_v4());
     let container_name1 = container_name.clone();
