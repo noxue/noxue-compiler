@@ -1,3 +1,7 @@
+## 关联项目
+
+在线编译器后端接口：<https://github.com/noxue/noxue-code>
+在线编译器前端界面：<https://github.com/noxue/noxue-code-ui>
 
 ## 在线编译器原理
 
